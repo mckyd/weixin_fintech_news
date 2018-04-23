@@ -88,3 +88,14 @@ ROBOTSTXT_OBEY = True
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+weixin_ids = ["iweiyangx", # 未央网
+              "cfca-cebnet", # 中欧电子银行网
+              "infoqchina", # infoq
+              "handefintech", # fintech前哨
+              "aijinrongpinglun", # ai金融评论
+              "Finance_01", # 零壹财经
+              "iefinance", # 互联网金融
+              "FinTechCat" # fintech猫观察
+              "gh_b11d03bc46ed", # 金融科技安全
+              ]
