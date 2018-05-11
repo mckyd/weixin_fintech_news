@@ -10,11 +10,8 @@ import scrapy
 
 class WeixinFintechNewsItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    title = scrapy.Field()
-
-    abstract = scrapy.Field()
-
-    reference = scrapy.Field()
-
-    time = scrapy.Field()
+    #title = scrapy.Field()
+    #abstract = scrapy.Field()
+    #reference = scrapy.Field()
+    #post_time = scrapy.Field()
+    itemsDict = scrapy.Field()
