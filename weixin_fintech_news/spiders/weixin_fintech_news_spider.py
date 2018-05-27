@@ -18,25 +18,22 @@ class WeixinFintechNewsSpider(scrapy.Spider):
         selector = Selector(response)
         profile_href = selector.xpath('//*[@id="sogou_vr_11002301_box_0"]/div/div[2]/p[1]/a/@href').extract()[0]
         wxid = response.meta['wxid']
-        time.sleep(28)
+        time.sleep(20)
         yield scrapy.Request(url=profile_href, callback=self.parse_profile, meta={'wxid': wxid})
 
     def parse_profile(self, response):
         itemsDict = {}
         wxid = response.meta['wxid']
-        push_lists = response.xpath('//*[@id="history"]')
-        print(push_lists.extract())
+        push_lists = response.xpath('//div[contains(@class, "weui_media_box appmsg")]')
+        #print("push_lists: ", push_lists.extract())
         for index, push_list in enumerate(push_lists):
-            weui_msg_card = push_list.xpath('/div[' + str(index + 1) + ']')
-            title = weui_msg_card.xpath('/*[@class="weui_media_title"]/text()').extract()
-            abstract = weui_msg_card.xpath('/*[@class="weui_media_desc"]/text()').extract()
-            reference = weui_msg_card.xpath('/*[@class="weui_media_title"]/@hrefs').extract()
-            image_url = weui_msg_card.xpath('/*[@class="weui_media_hd"]/@style').extract()
-            post_date = weui_msg_card.xpath('/*[@class="weui_media_desc"]/text()').extract()
-
-            print("type: ", type(title), type(abstract), type(reference), type(image_url), type(post_date))
-
+            title = push_list.xpath('.//*[@class="weui_media_title"]/text()').extract()[0].strip()
+            abstract = push_list.xpath('.//*[@class="weui_media_desc"]/text()').extract()[0].strip()
+            reference = push_list.xpath('.//*[@class="weui_media_title"]/@hrefs').extract()[0].strip()
+            image_url = push_list.xpath('.//*[@class="weui_media_hd"]/@style').extract()[0].strip() \
+                .lstrip('background-image:url(').rstrip(')')
+            post_date = push_list.xpath('.//*[@class="weui_media_extra_info"]/text()').extract()[0].strip()
             itemDict = {'title': title, 'abstract': abstract, 'reference': reference, 'image_url': image_url, 'post_date': post_date}
-            uuid = hashlib.md5(wxid + title + abstract).hexdigest()
+            uuid = hashlib.md5((wxid + title + abstract).encode('utf-8')).hexdigest()
             itemsDict[uuid] = itemDict
         return itemsDict

@@ -8,5 +8,5 @@
 
 class WeixinFintechNewsPipeline(object):
     def process_item(self, item, spider):
-        print(item)
+        print('items:', item.keys())
         return item
