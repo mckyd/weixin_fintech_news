@@ -14,27 +14,29 @@ class WeixinFintechNewsSpider(scrapy.Spider):
             yield scrapy.Request(url=url, callback=self.parse, meta={'wxid': weixin_id})
 
     def parse(self, response):
+        print('User-Agent: ', response.request.headers.get('User-Agent'), None)
         selector = Selector(response)
         profile_href = selector.xpath('//*[@id="sogou_vr_11002301_box_0"]/div/div[2]/p[1]/a/@href').extract()[0]
         wxid = response.meta['wxid']
-        time.sleep(1)
+        time.sleep(28)
         yield scrapy.Request(url=profile_href, callback=self.parse_profile, meta={'wxid': wxid})
 
     def parse_profile(self, response):
         itemsDict = {}
         wxid = response.meta['wxid']
-        push_lists = Selector(response).xpath('//*[@id="history"]')
-        print("push_lists", push_lists)
-        # for push_list in push_lists:
-        #     msg_card_bd = Selector(text=push_list).xpath('//*').extract()[1]
-        #     print('msg_card_bd: ', msg_card_bd)
-        #     title = Selector(text=msg_card_bd).xpath('//*[@class="weui_media_title"]/text()').extract()
-        #     abstract = Selector(text=msg_card_bd).xpath('//*[@class="weui_media_desc"]/text()').extract()
-        #     reference = Selector(text=msg_card_bd).xpath('//*[@class="weui_media_title"]/@hrefs').extract()
-        #     image_url = Selector(text=msg_card_bd).xpath('//*[@class="weui_media_hd"]/@style').extract()
-        #     post_date = Selector(text=msg_card_bd).xpath('//*[@class="weui_media_desc"]/text()').extract()
-        #
-        #     itemDict = {'title': title, 'abstract': abstract, 'reference': reference, 'image_url': image_url, 'post_date': post_date}
-        #     uuid = hashlib.md5(wxid + title + abstract).hexdigest()
-        #     itemsDict[uuid] = itemDict
+        push_lists = response.xpath('//*[@id="history"]')
+        print(push_lists.extract())
+        for index, push_list in enumerate(push_lists):
+            weui_msg_card = push_list.xpath('/div[' + str(index + 1) + ']')
+            title = weui_msg_card.xpath('/*[@class="weui_media_title"]/text()').extract()
+            abstract = weui_msg_card.xpath('/*[@class="weui_media_desc"]/text()').extract()
+            reference = weui_msg_card.xpath('/*[@class="weui_media_title"]/@hrefs').extract()
+            image_url = weui_msg_card.xpath('/*[@class="weui_media_hd"]/@style').extract()
+            post_date = weui_msg_card.xpath('/*[@class="weui_media_desc"]/text()').extract()
+
+            print("type: ", type(title), type(abstract), type(reference), type(image_url), type(post_date))
+
+            itemDict = {'title': title, 'abstract': abstract, 'reference': reference, 'image_url': image_url, 'post_date': post_date}
+            uuid = hashlib.md5(wxid + title + abstract).hexdigest()
+            itemsDict[uuid] = itemDict
         return itemsDict

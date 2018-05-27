@@ -33,7 +33,7 @@ DOWNLOAD_DELAY = 3
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-COOKIES_ENABLED = False
+COOKIES_ENABLED = True
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -55,7 +55,8 @@ COOKIES_ENABLED = False
 DOWNLOADER_MIDDLEWARES = {
     #'weixin_fintech_news.middlewares.WeixinFintechNewsDownloaderMiddleware': 543,
     'scrapy.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    'weixin_fintech_news.middlewares.RandomUserAgentMiddleware': 400
+    'weixin_fintech_news.middlewares.RandomUserAgentMiddleware': 400,
+    'weixin_fintech_news.middlewares.JavaScriptMiddleware': 500
 }
 
 # Enable or disable extensions
